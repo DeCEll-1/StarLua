@@ -1,0 +1,19 @@
+{
+  "id": "ZZStarLua",
+  "name": "StarLua",
+  "author": "DeCell",
+  "totalConversion": "false",
+  "version": {
+    "major": 0,
+    "minor": 1,
+    "patch": 0
+  },
+  "description": "A lua",
+  "gameVersion": "0.98a-RC5",
+  "modPlugin": "DeCell.StarLua.Plugins.ModPlugin",
+  "jars": [
+    "jars/StarLua.jar",
+    "jars/luaj-jse.jar"
+  ],
+  "LuaList": "luaSrc.txt"
+}
