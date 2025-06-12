@@ -1,5 +1,7 @@
 package DeCell.StarLua.ShipSystems;
 
+import DeCell.StarLua.Functions.CastFunction;
+import DeCell.StarLua.Functions.InstanceOfFunction;
 import DeCell.StarLua.Misc.ReflectiveLuaWrapper;
 import DeCell.StarLua.Misc.StaticReflectiveLuaWrapper;
 import com.fs.starfarer.api.Global;
@@ -26,16 +28,26 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
         Globals globals = JsePlatform.standardGlobals();
 
         LuaValue globalAPI = null;
+        LuaValue shipAPI = null;
         LuaValue color = null;
 
 
         try {
+
+            InstanceOfFunction.addToGlobal(globals);
+            CastFunction.addToGlobal(globals);
+
             globalAPI = new StaticReflectiveLuaWrapper(Global.class);
-            globals.set("_Global", globalAPI);
+            globals.set("Global", globalAPI);
 
             color = new StaticReflectiveLuaWrapper(Color.class);
             ReflectiveLuaWrapper.createConstructor(Color.class, color);
+
             globals.set("Color", color);
+
+            shipAPI = new StaticReflectiveLuaWrapper(ShipAPI.class);
+
+            globals.set("ShipAPI", shipAPI);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
@@ -47,6 +59,9 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
     @Override
     public void apply(MutableShipStatsAPI stats, String id, State state, float effectLevel) {
         LuaValue func = lua.get("apply");
+
+
+
         if (func.isfunction()) {
             LuaValue wrappedStats = null;
             try {

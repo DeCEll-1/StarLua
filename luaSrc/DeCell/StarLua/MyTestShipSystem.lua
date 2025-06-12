@@ -1,11 +1,24 @@
 -- TYPE SHIP_SYSTEM
--- PACKAGE DeCell.StarLua
+-- PACKAGE data.scripts.DeCell.StarLua
 -- NAME MyTestShipSystem
 JITTER_COLOR = Color.new(90, 200, 255, 50)
 return {
 
     -- apply(stats: MutableShipStatsAPI, id: String, state: String, effectLevel: float): void
     apply = function(stats, id, state, effectLevel)
+        local ship = nil
+        local player = false
+
+        local entity = stats:getEntity()
+
+        if instanceof(entity, ShipAPI) then
+            ship = cast(entity, ShipAPI)
+            player = ship == Global:getCombatEngine():getPlayerShip()
+            id = id .. "_" .. ship:getId()
+        else
+            return
+        end
+
     end,
 
     -- unapply(stats: MutableShipStatsAPI, id: String): void
@@ -59,6 +72,7 @@ return {
     getDisplayNameOverride = function(state, effectLevel)
         -- return state
 
-        return JITTER_COLOR:getBlue()
+        return nil
+        -- return JITTER_COLOR:getBlue()
     end
 }

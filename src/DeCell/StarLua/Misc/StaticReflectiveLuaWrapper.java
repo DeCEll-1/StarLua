@@ -12,7 +12,7 @@ import org.luaj.vm2.lib.jse.CoerceJavaToLua;
 import static DeCell.StarLua.Misc.Reflections.*;
 
 public class StaticReflectiveLuaWrapper extends LuaTable {
-    private final Class<?> clazz;
+    public final Class<?> clazz;
 
     public StaticReflectiveLuaWrapper(Class<?> clazz) throws Throwable {
         this.clazz = clazz;

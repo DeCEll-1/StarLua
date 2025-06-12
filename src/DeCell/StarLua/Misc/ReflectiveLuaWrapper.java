@@ -13,11 +13,14 @@ import static DeCell.StarLua.Misc.Reflections.*;
 
 
 public class ReflectiveLuaWrapper extends LuaTable {
-    private Object javaObject;
+    public Object javaObject;
+    public Class<?> javaObjectClass;
 
     public ReflectiveLuaWrapper(Object obj) throws Throwable {
 
         this.javaObject = obj;
+        this.javaObjectClass = obj.getClass();
+
 
         // Group methods by name for overload handling
         List<Object> methods = getMethods(obj.getClass());
