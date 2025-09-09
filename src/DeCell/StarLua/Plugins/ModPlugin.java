@@ -5,13 +5,15 @@ import com.fs.starfarer.api.BaseModPlugin;
 import com.fs.starfarer.api.Global;
 import com.fs.starfarer.api.ModSpecAPI;
 import com.thoughtworks.xstream.XStream;
-import org.json.JSONException;
+import org.apache.log4j.Priority;
 
-import java.io.IOException;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
+
+import static DeCell.StarLua.Misc.Reflections.*;
 
 
 public class ModPlugin extends BaseModPlugin {

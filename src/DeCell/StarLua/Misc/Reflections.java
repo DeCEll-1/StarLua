@@ -1,10 +1,27 @@
 package DeCell.StarLua.Misc;
 
+import org.luaj.vm2.LuaValue;
+
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 
+import static DeCell.StarLua.Misc.ReflectiveLuaWrapper.WRAPPER_METATABLE;
+
+
 public class Reflections {
+
+    public static ReflectiveLuaWrapper luaObjectToWrapper(LuaValue val) {
+        if (val instanceof ReflectiveLuaWrapper) {
+            return (ReflectiveLuaWrapper) val;
+        }
+        if (val.istable() && val.getmetatable() == WRAPPER_METATABLE) {
+            // Assuming the table holds the instance itself (since ReflectiveLuaWrapper *is* the LuaTable)
+            return (ReflectiveLuaWrapper) val;
+        }
+        return null;
+    }
+
 
     //region reflection
     public static final MethodHandles.Lookup lookup = MethodHandles.lookup();
@@ -40,6 +57,19 @@ public class Reflections {
     public static final Class<?> modifierClass;
     public static final MethodHandle modifierIsPublic;
     public static final MethodHandle modifierIsStatic;
+    public static final MethodHandle methodIsSynthetic;
+
+    public static final MethodHandle methodIsBridge;
+
+    public static final Class<?> filesClass;
+    public static final Class<?> pathClass;
+    public static final MethodHandle filesReadStringHandle;
+    public static final Class<?> uriClass;
+    public static final MethodHandle pathOfUriHandle;
+
+    public static final MethodHandle uriCreateHandle;
+    public static final MethodHandle filesDeleteHandle;
+    public static final MethodHandle filesDeleteIfExistsHandle;
 
     static {
         try {
@@ -85,6 +115,37 @@ public class Reflections {
 
             modifierIsPublic = lookup.findStatic(modifierClass, "isPublic", MethodType.methodType(boolean.class, int.class));
             modifierIsStatic = lookup.findStatic(modifierClass, "isStatic", MethodType.methodType(boolean.class, int.class));
+
+            methodIsSynthetic = lookup.findVirtual(methodClass, "isSynthetic", MethodType.methodType(boolean.class));
+            methodIsBridge = lookup.findVirtual(methodClass, "isBridge", MethodType.methodType(boolean.class));
+
+            filesClass = Class.forName("java.nio.file.Files", false, Class.class.getClassLoader());
+            pathClass = Class.forName("java.nio.file.Path", false, Class.class.getClassLoader());
+            uriClass = Class.forName("java.net.URI", false, Class.class.getClassLoader());
+
+            pathOfUriHandle = lookup.findStatic(pathClass, "of", MethodType.methodType(pathClass, uriClass));
+
+            // Files.readString(Path) -> String
+            filesReadStringHandle = lookup.findStatic(filesClass, "readString", MethodType.methodType(String.class, pathClass));
+
+            uriCreateHandle = lookup.findStatic(
+                    uriClass,
+                    "create",
+                    MethodType.methodType(uriClass, String.class)
+            );
+
+            filesDeleteHandle = lookup.findStatic(
+                    filesClass,
+                    "delete",
+                    MethodType.methodType(void.class, pathClass)
+            );
+
+            // Files.deleteIfExists(Path) -> boolean
+            filesDeleteIfExistsHandle = lookup.findStatic(
+                    filesClass,
+                    "deleteIfExists",
+                    MethodType.methodType(boolean.class, pathClass)
+            );
 
         } catch (Exception e) {
             throw new RuntimeException(e);

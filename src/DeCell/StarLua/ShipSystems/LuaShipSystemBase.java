@@ -2,6 +2,8 @@ package DeCell.StarLua.ShipSystems;
 
 import DeCell.StarLua.Functions.CastFunction;
 import DeCell.StarLua.Functions.InstanceOfFunction;
+import DeCell.StarLua.Misc.LuaMethodParser;
+import DeCell.StarLua.Misc.Reflections;
 import DeCell.StarLua.Misc.ReflectiveLuaWrapper;
 import DeCell.StarLua.Misc.StaticReflectiveLuaWrapper;
 import com.fs.starfarer.api.Global;
@@ -17,20 +19,30 @@ import org.luaj.vm2.lib.jse.JsePlatform;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public abstract class LuaShipSystemBase extends BaseShipSystemScript {
     protected LuaValue lua;
+    protected Set<String> usedFunctions = new HashSet<>();
 
     public LuaShipSystemBase() {
     }
 
     protected void setLuaPath(String path, String modID) throws JSONException, IOException {
+        String script = Global.getSettings().loadText(path, modID);
+
+        usedFunctions = LuaMethodParser.extractMethodNames(script);
+
         Globals globals = JsePlatform.standardGlobals();
 
         LuaValue globalAPI = null;
         LuaValue shipAPI = null;
         LuaValue color = null;
 
+        LuaValue statusData = null;
 
         try {
 
@@ -48,37 +60,52 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
             shipAPI = new StaticReflectiveLuaWrapper(ShipAPI.class);
 
             globals.set("ShipAPI", shipAPI);
+
+            statusData = new StaticReflectiveLuaWrapper(StatusData.class);
+            ReflectiveLuaWrapper.createConstructor(StatusData.class, statusData);
+
+            globals.set("StatusData", statusData);
+
+            // hope this does die and set itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself in itself
+//            globals.set("this", new ReflectiveLuaWrapper(this));
+
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
 
-        LuaValue chunk = globals.load(Global.getSettings().loadText(path, modID));
+
+        LuaValue chunk = globals.load(script);
         lua = chunk.call(); // Lua file must return a table
     }
 
     @Override
     public void apply(MutableShipStatsAPI stats, String id, State state, float effectLevel) {
         LuaValue func = lua.get("apply");
+        if (!func.isfunction()) return;
 
-
-
-        if (func.isfunction()) {
-            LuaValue wrappedStats = null;
-            try {
-                wrappedStats = new ReflectiveLuaWrapper(stats);
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
-            }
-
-            // Now call Lua function with the wrappedStats instead of the raw stats object
-            Varargs args = LuaValue.varargsOf(new LuaValue[]{
-                    wrappedStats,
-                    LuaValue.valueOf(id),
-                    LuaValue.valueOf(state.toString()),
-                    LuaValue.valueOf(effectLevel)
-            });
-            func.invoke(args);
+        // Use cached wrapper
+        LuaValue wrappedStats = null;
+        try {
+            wrappedStats = new ReflectiveLuaWrapper(stats, usedFunctions);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
+
+        // Precompute state LuaValues if called every frame
+        LuaValue luaState;
+        switch (state) {
+            case IN -> luaState = LuaValue.valueOf("IN");
+            case ACTIVE -> luaState = LuaValue.valueOf("ACTIVE");
+            case OUT -> luaState = LuaValue.valueOf("OUT");
+            default -> luaState = LuaValue.NIL;
+        }
+
+        func.invoke(LuaValue.varargsOf(new LuaValue[]{
+                wrappedStats,
+                LuaValue.valueOf(id),
+                luaState,
+                LuaValue.valueOf(effectLevel)
+        }));
     }
 
     @Override
@@ -86,7 +113,6 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
         LuaValue func = lua.get("getStatusData");
 
         if (func.isfunction()) {
-
             // Now call Lua function with the wrappedStats instead of the raw stats object
             Varargs args = LuaValue.varargsOf(new LuaValue[]{
                     LuaValue.valueOf(index),
@@ -94,12 +120,13 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
                     LuaValue.valueOf(effectLevel)
             });
 
+
             LuaValue result = func.invoke(args).arg(1);
-            if (result.istable()) {
-                String text = result.get("text").tojstring();
-                boolean active = result.get("active").toboolean();
-                return new StatusData(text, active);
-            }
+            if (result == LuaValue.NIL)
+                return null;
+
+            StatusData res = (StatusData) Reflections.luaObjectToWrapper(result).javaObject;
+            return res;
         }
         return null;
     }
@@ -110,7 +137,7 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
         if (func.isfunction()) {
             LuaValue wrappedStats = null;
             try {
-                wrappedStats = new ReflectiveLuaWrapper(stats);
+                wrappedStats = new ReflectiveLuaWrapper(stats, usedFunctions);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
@@ -132,8 +159,8 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
             LuaValue wrappedSystem = null;
             LuaValue wrappedShip = null;
             try {
-                wrappedSystem = new ReflectiveLuaWrapper(system);
-                wrappedShip = new ReflectiveLuaWrapper(ship);
+                wrappedSystem = new ReflectiveLuaWrapper(system, usedFunctions);
+                wrappedShip = new ReflectiveLuaWrapper(ship, usedFunctions);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
@@ -160,8 +187,8 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
             LuaValue wrappedSystem = null;
             LuaValue wrappedShip = null;
             try {
-                wrappedSystem = new ReflectiveLuaWrapper(system);
-                wrappedShip = new ReflectiveLuaWrapper(ship);
+                wrappedSystem = new ReflectiveLuaWrapper(system, usedFunctions);
+                wrappedShip = new ReflectiveLuaWrapper(ship, usedFunctions);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
@@ -182,7 +209,7 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
         if (func.isfunction()) {
             LuaValue wrappedShip;
             try {
-                wrappedShip = new ReflectiveLuaWrapper(ship);
+                wrappedShip = new ReflectiveLuaWrapper(ship, usedFunctions);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
@@ -198,7 +225,7 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
         if (func.isfunction()) {
             LuaValue wrappedShip;
             try {
-                wrappedShip = new ReflectiveLuaWrapper(ship);
+                wrappedShip = new ReflectiveLuaWrapper(ship, usedFunctions);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
@@ -214,7 +241,7 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
         if (func.isfunction()) {
             LuaValue wrappedShip;
             try {
-                wrappedShip = new ReflectiveLuaWrapper(ship);
+                wrappedShip = new ReflectiveLuaWrapper(ship, usedFunctions);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
@@ -230,7 +257,7 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
         if (func.isfunction()) {
             LuaValue wrappedShip;
             try {
-                wrappedShip = new ReflectiveLuaWrapper(ship);
+                wrappedShip = new ReflectiveLuaWrapper(ship, usedFunctions);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
@@ -246,7 +273,7 @@ public abstract class LuaShipSystemBase extends BaseShipSystemScript {
         if (func.isfunction()) {
             LuaValue wrappedShip;
             try {
-                wrappedShip = new ReflectiveLuaWrapper(ship);
+                wrappedShip = new ReflectiveLuaWrapper(ship, usedFunctions);
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }

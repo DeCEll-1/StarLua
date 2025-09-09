@@ -1,2 +1,1 @@
 luaSrc/DeCell/StarLua/ModPluginLua.lua,MOD_PLUGIN, , 
-luaSrc/DeCell/StarLua/MyTestShipSystem.lua,SHIP_SYSTEM,data.scripts.DeCell.StarLua,MyTestShipSystem

@@ -27,9 +27,9 @@ public class CastFunction extends VarArgFunction {
                 Class<?> clazz = ((StaticReflectiveLuaWrapper) to).clazz;
                 try {
                     // if its the same instance, we *shouldnt* need to cast, i think
-                    if (clazz.isInstance(javaObject)){
-                        return cast;
-                    }
+//                    if (clazz.isInstance(javaObject)){
+//                        return cast;
+//                    }
                     return new ReflectiveLuaWrapper(clazz.cast(javaObject));
                 } catch (Throwable e) {
                     return LuaValue.NIL;

@@ -1,0 +1,312 @@
+--- * Class Object is the root of the class hierarchy.
+--- * Every class has Object as a superclass. All objects,
+--- * including arrays, implement the methods of this class.
+--- * @see     java.lang.Class
+--- * @since   1.0
+---@class Object
+local Object = {}
+--- * Constructs a new object.
+---@return Object
+function Object.new() return {} end
+
+--- * Returns a hash code value for the object. This method is
+--- * supported for the benefit of hash tables such as those provided by
+--- * java.util.HashMap.
+--- *
+--- * The general contract of hashCode is:
+--- *
+--- * Whenever it is invoked on the same object more than once during
+--- *     an execution of a Java application, the hashCode method
+--- *     must consistently return the same integer, provided no information
+--- *     used in equals comparisons on the object is modified.
+--- *     This integer need not remain consistent from one execution of an
+--- *     application to another execution of the same application.
+--- * If two objects are equal according to the {@link
+--- *     equals(Object) equals} method, then calling the {@code
+--- *     hashCode} method on each of the two objects must produce the
+--- *     same integer result.
+--- * It is not required that if two objects are unequal
+--- *     according to the equals(Object) equals method, then
+--- *     calling the hashCode method on each of the two objects
+--- *     must produce distinct integer results.  However, the programmer
+--- *     should be aware that producing distinct integer results for
+--- *     unequal objects may improve the performance of hash tables.
+--- *
+--- * @implSpec
+--- * As far as is reasonably practical, the hashCode method defined
+--- * by class Object returns distinct integers for distinct objects.
+--- * @return  a hash code value for this object.
+--- * @see     java.lang.Object#equals(java.lang.Object)
+--- * @see     java.lang.System#identityHashCode
+---@return int
+function Object:hashCode() return {} end
+
+--- * Indicates whether some other object is "equal to" this one.
+--- *
+--- * The equals method implements an equivalence relation
+--- * on non-null object references:
+--- *
+--- * It is reflexive: for any non-null reference value
+--- *     x, {@code x.equals(x)} should return
+--- *     true.
+--- * It is symmetric: for any non-null reference values
+--- *     x and y, {@code x.equals(y)}
+--- *     should return true if and only if
+--- *     {@code y.equals(x)} returns true.
+--- * It is transitive: for any non-null reference values
+--- *     x, y, and z, if
+--- *     {@code x.equals(y)} returns true and
+--- *     {@code y.equals(z)} returns true, then
+--- *     {@code x.equals(z)} should return true.
+--- * It is consistent: for any non-null reference values
+--- *     x and y, multiple invocations of
+--- *     {@code x.equals(y)} consistently return true
+--- *     or consistently return false, provided no
+--- *     information used in equals comparisons on the
+--- *     objects is modified.
+--- * For any non-null reference value x,
+--- *     {@code x.equals(null)} should return false.
+--- *
+--- *
+--- * An equivalence relation partitions the elements it operates on
+--- * into equivalence classes; all the members of an
+--- * equivalence class are equal to each other. Members of an
+--- * equivalence class are substitutable for each other, at least
+--- * for some purposes.
+--- * @implSpec
+--- * The equals method for class Object implements
+--- * the most discriminating possible equivalence relation on objects;
+--- * that is, for any non-null reference values x and
+--- * y, this method returns true if and only
+--- * if x and y refer to the same object
+--- * ({@code x == y} has the value true).
+--- * In other words, under the reference equality equivalence
+--- * relation, each equivalence class only has a single element.
+--- * @apiNote
+--- * It is generally necessary to override the hashCode hashCode
+--- * method whenever this method is overridden, so as to maintain the
+--- * general contract for the hashCode method, which states
+--- * that equal objects must have equal hash codes.
+--- * @param   obj   the reference object with which to compare.
+--- * @return  true if this object is the same as the obj
+--- *          argument; false otherwise.
+--- * @see     #hashCode()
+--- * @see     java.util.HashMap
+---@param obj Object
+---@return boolean
+function Object:equals(obj) return {} end
+
+--- * Returns a string representation of the object.
+--- * @apiNote
+--- * In general, the
+--- * toString method returns a string that
+--- * "textually represents" this object. The result should
+--- * be a concise but informative representation that is easy for a
+--- * person to read.
+--- * It is recommended that all subclasses override this method.
+--- * The string output is not necessarily stable over time or across
+--- * JVM invocations.
+--- * @implSpec
+--- * The toString method for class Object
+--- * returns a string consisting of the name of the class of which the
+--- * object is an instance, the at-sign character `{@code @}', and
+--- * the unsigned hexadecimal representation of the hash code of the
+--- * object. In other words, this method returns a string equal to the
+--- * value of:
+--- *
+--- *
+--- * getClass().getName() + '@' + Integer.toHexString(hashCode())
+--- *
+--- * @return  a string representation of the object.
+---@return String
+function Object:toString() return {} end
+
+--- * Wakes up a single thread that is waiting on this object's
+--- * monitor. If any threads are waiting on this object, one of them
+--- * is chosen to be awakened. The choice is arbitrary and occurs at
+--- * the discretion of the implementation. A thread waits on an object's
+--- * monitor by calling one of the wait methods.
+--- *
+--- * The awakened thread will not be able to proceed until the current
+--- * thread relinquishes the lock on this object. The awakened thread will
+--- * compete in the usual manner with any other threads that might be
+--- * actively competing to synchronize on this object; for example, the
+--- * awakened thread enjoys no reliable privilege or disadvantage in being
+--- * the next thread to lock this object.
+--- *
+--- * This method should only be called by a thread that is the owner
+--- * of this object's monitor. A thread becomes the owner of the
+--- * object's monitor in one of three ways:
+--- *
+--- * By executing a synchronized instance method of that object.
+--- * By executing the body of a synchronized statement
+--- *     that synchronizes on the object.
+--- * For objects of type {@code Class,} by executing a
+--- *     synchronized static method of that class.
+--- *
+--- *
+--- * Only one thread at a time can own an object's monitor.
+--- * @throws  IllegalMonitorStateException  if the current thread is not
+--- *               the owner of this object's monitor.
+--- * @see        java.lang.Object#notifyAll()
+--- * @see        java.lang.Object#wait()
+---@return void
+function Object:notify() return {} end
+
+--- * Wakes up all threads that are waiting on this object's monitor. A
+--- * thread waits on an object's monitor by calling one of the
+--- * wait methods.
+--- *
+--- * The awakened threads will not be able to proceed until the current
+--- * thread relinquishes the lock on this object. The awakened threads
+--- * will compete in the usual manner with any other threads that might
+--- * be actively competing to synchronize on this object; for example,
+--- * the awakened threads enjoy no reliable privilege or disadvantage in
+--- * being the next thread to lock this object.
+--- *
+--- * This method should only be called by a thread that is the owner
+--- * of this object's monitor. See the notify method for a
+--- * description of the ways in which a thread can become the owner of
+--- * a monitor.
+--- * @throws  IllegalMonitorStateException  if the current thread is not
+--- *               the owner of this object's monitor.
+--- * @see        java.lang.Object#notify()
+--- * @see        java.lang.Object#wait()
+---@return void
+function Object:notifyAll() return {} end
+
+--- * Causes the current thread to wait until it is awakened, typically
+--- * by being notified or interrupted.
+--- *
+--- * In all respects, this method behaves as if {@code wait(0L, 0)}
+--- * had been called. See the specification of the #wait(long, int) method
+--- * for details.
+--- * @throws IllegalMonitorStateException if the current thread is not
+--- *         the owner of the object's monitor
+--- * @throws InterruptedException if any thread interrupted the current thread before or
+--- *         while the current thread was waiting. The interrupted status of the
+--- *         current thread is cleared when this exception is thrown.
+--- * @see    #notify()
+--- * @see    #notifyAll()
+--- * @see    #wait(long)
+--- * @see    #wait(long, int)
+---@return void
+function Object:wait() return {} end
+
+--- * Causes the current thread to wait until it is awakened, typically
+--- * by being notified or interrupted, or until a
+--- * certain amount of real time has elapsed.
+--- *
+--- * In all respects, this method behaves as if {@code wait(timeoutMillis, 0)}
+--- * had been called. See the specification of the #wait(long, int) method
+--- * for details.
+--- * @param  timeoutMillis the maximum time to wait, in milliseconds
+--- * @throws IllegalArgumentException if timeoutMillis is negative
+--- * @throws IllegalMonitorStateException if the current thread is not
+--- *         the owner of the object's monitor
+--- * @throws InterruptedException if any thread interrupted the current thread before or
+--- *         while the current thread was waiting. The interrupted status of the
+--- *         current thread is cleared when this exception is thrown.
+--- * @see    #notify()
+--- * @see    #notifyAll()
+--- * @see    #wait()
+--- * @see    #wait(long, int)
+---@param timeoutMillis long
+---@return void
+function Object:wait(timeoutMillis) return {} end
+
+--- * Causes the current thread to wait until it is awakened, typically
+--- * by being notified or interrupted, or until a
+--- * certain amount of real time has elapsed.
+--- *
+--- * The current thread must own this object's monitor lock. See the
+--- * #notify notify method for a description of the ways in which
+--- * a thread can become the owner of a monitor lock.
+--- *
+--- * This method causes the current thread (referred to here as T) to
+--- * place itself in the wait set for this object and then to relinquish any
+--- * and all synchronization claims on this object. Note that only the locks
+--- * on this object are relinquished; any other objects on which the current
+--- * thread may be synchronized remain locked while the thread waits.
+--- *
+--- * Thread T then becomes disabled for thread scheduling purposes
+--- * and lies dormant until one of the following occurs:
+--- *
+--- * Some other thread invokes the notify method for this
+--- * object and thread T happens to be arbitrarily chosen as
+--- * the thread to be awakened.
+--- * Some other thread invokes the notifyAll method for this
+--- * object.
+--- * Some other thread {@linkplain Thread#interrupt() interrupts}
+--- * thread T.
+--- * The specified amount of real time has elapsed, more or less.
+--- * The amount of real time, in nanoseconds, is given by the expression
+--- * {@code 1000000 * timeoutMillis + nanos}. If timeoutMillis and nanos
+--- * are both zero, then real time is not taken into consideration and the
+--- * thread waits until awakened by one of the other causes.
+--- * Thread T is awakened spuriously. (See below.)
+--- *
+--- *
+--- * The thread T is then removed from the wait set for this
+--- * object and re-enabled for thread scheduling. It competes in the
+--- * usual manner with other threads for the right to synchronize on the
+--- * object; once it has regained control of the object, all its
+--- * synchronization claims on the object are restored to the status quo
+--- * ante - that is, to the situation as of the time that the wait
+--- * method was invoked. Thread T then returns from the
+--- * invocation of the wait method. Thus, on return from the
+--- * wait method, the synchronization state of the object and of
+--- * thread T is exactly as it was when the wait method
+--- * was invoked.
+--- *
+--- * A thread can wake up without being notified, interrupted, or timing out, a
+--- * so-called spurious wakeup.  While this will rarely occur in practice,
+--- * applications must guard against it by testing for the condition that should
+--- * have caused the thread to be awakened, and continuing to wait if the condition
+--- * is not satisfied. See the example below.
+--- *
+--- * For more information on this topic, see section 14.2,
+--- * "Condition Queues," in Brian Goetz and others' Java Concurrency
+--- * in Practice (Addison-Wesley, 2006) or Item 69 in Joshua
+--- * Bloch's Effective Java, Second Edition (Addison-Wesley,
+--- * 2008).
+--- *
+--- * If the current thread is {@linkplain java.lang.Thread#interrupt() interrupted}
+--- * by any thread before or while it is waiting, then an InterruptedException
+--- * is thrown.  The interrupted status of the current thread is cleared when
+--- * this exception is thrown. This exception is not thrown until the lock status of
+--- * this object has been restored as described above.
+--- * @apiNote
+--- * The recommended approach to waiting is to check the condition being awaited in
+--- * a while loop around the call to wait, as shown in the example
+--- * below. Among other things, this approach avoids problems that can be caused
+--- * by spurious wakeups.
+--- * {@code
+--- *     synchronized (obj) {
+--- *         while ( and ) {
+--- *             long timeoutMillis = ... ; // recompute timeout values
+--- *             int nanos = ... ;
+--- *             obj.wait(timeoutMillis, nanos);
+--- *         }
+--- *         ... // Perform action appropriate to condition or timeout
+--- *     }
+--- * }
+--- * @param  timeoutMillis the maximum time to wait, in milliseconds
+--- * @param  nanos   additional time, in nanoseconds, in the range 0-999999 inclusive
+--- * @throws IllegalArgumentException if timeoutMillis is negative,
+--- *         or if the value of nanos is out of range
+--- * @throws IllegalMonitorStateException if the current thread is not
+--- *         the owner of the object's monitor
+--- * @throws InterruptedException if any thread interrupted the current thread before or
+--- *         while the current thread was waiting. The interrupted status of the
+--- *         current thread is cleared when this exception is thrown.
+--- * @see    #notify()
+--- * @see    #notifyAll()
+--- * @see    #wait()
+--- * @see    #wait(long)
+---@param timeoutMillis long
+---@param nanos integer
+---@return void
+function Object:wait(timeoutMillis, nanos) return {} end
+
+_G.Object = Object
